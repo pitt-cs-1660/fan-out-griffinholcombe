@@ -7,7 +7,7 @@ on:
 
 env:
   AWS_REGION: us-east-1 # update if you are in a different region
-  AWS_LAMBDA_ROLE_ARN: arn:aws:iam::136004865274:user/griffinh:role/lambda-image-processing-role # replace with your ARN
+  AWS_LAMBDA_ROLE_ARN: arn:aws:iam::136004865274:role/lambda-image-processing-role # replace with your ARN
 
 jobs:
   deploy-metadata-extractor:
