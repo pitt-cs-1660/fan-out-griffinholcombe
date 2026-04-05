@@ -6,8 +6,8 @@ on:
       - main
 
 env:
-  AWS_REGION: us-east-1  # update if you are in a different region
-  AWS_LAMBDA_ROLE_ARN: arn:aws:iam::123456789012:role/lambda-image-processing-role  # replace with your ARN
+  AWS_REGION: us-east-1 # update if you are in a different region
+  AWS_LAMBDA_ROLE_ARN: arn:aws:iam::136004865274:user/griffinh:role/lambda-image-processing-role # replace with your ARN
 
 jobs:
   deploy-metadata-extractor:
@@ -40,12 +40,9 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           cd lambda/metadata_extractor
-          ######
-          #
-          #  TODO: implement build and push to ECR
-          #
-          ######
-          exit 1
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Check if Lambda function exists
         id: check-lambda-metadata-extractor
@@ -77,8 +74,8 @@ jobs:
         uses: aws-actions/aws-lambda-deploy@v1.1.0
         with:
           function-name: metadata-extractor
-          package-type: Image  # no zip!
-          image-uri: ${{ steps.metadata-extractor-build-image.outputs.image }}  # ECR image URI from previous step
+          package-type: Image # no zip!
+          image-uri: ${{ steps.metadata-extractor-build-image.outputs.image }} # ECR image URI from previous step
           role: ${{ env.AWS_LAMBDA_ROLE_ARN }}
           publish: true
 
@@ -112,12 +109,9 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           cd lambda/image_validator
-          ######
-          #
-          #  TODO: implement build and push to ECR
-          #
-          ######
-          exit 1
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Check if Lambda function exists
         id: check-lambda-image-validator
@@ -149,7 +143,7 @@ jobs:
         uses: aws-actions/aws-lambda-deploy@v1.1.0
         with:
           function-name: image-validator
-          package-type: Image  # no zip!
-          image-uri: ${{ steps.image-validator-build-image.outputs.image }}  # ECR image URI from previous step
+          package-type: Image # no zip!
+          image-uri: ${{ steps.image-validator-build-image.outputs.image }} # ECR image URI from previous step
           role: ${{ env.AWS_LAMBDA_ROLE_ARN }}
           publish: true
