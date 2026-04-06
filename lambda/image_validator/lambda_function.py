@@ -2,7 +2,7 @@ import json
 import os
 import boto3
 
-s3 = boto3.client('s3')
+s3 = None
 
 VALID_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif']
 
@@ -39,6 +39,10 @@ def lambda_handler(event, context):
     important: to trigger the DLQ, you must raise an exception (not return an error).
     """
 
+    global s3
+    if s3 is None:
+        s3 = boto3.client('s3')
+    
     print("=== image validator invoked ===")
 
     for record in event['Records']:

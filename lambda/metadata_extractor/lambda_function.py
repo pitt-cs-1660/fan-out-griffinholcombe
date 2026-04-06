@@ -3,7 +3,7 @@ import os
 import boto3
 from datetime import datetime
 
-s3 = boto3.client('s3')
+s3 = None
 
 def lambda_handler(event, context):
     """
@@ -36,6 +36,10 @@ def lambda_handler(event, context):
         }
     """
 
+    global s3
+    if s3 is None:
+        s3 = boto3.client('s3')
+    
     print("=== metadata extractor invoked ===")
 
     for record in event['Records']:
